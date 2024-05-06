@@ -1,4 +1,4 @@
-# This searches the dratings website for MLB matches where dratings thinks a team has a chance of 70% or higher to win. Can be applied to other sports easily
+# This searches the dratings website for MLB matches where dratings thinks a team has a chance of 70% or higher to win
 
 import requests
 from bs4 import BeautifulSoup
@@ -47,7 +47,8 @@ def get_predictions(url):
                                     
                     # Associate team names with values if at least one team has a confidence value above 70%
                     if len(team_names) == 2 and len(green_values) > 0:
-                        teams_data.append({team_names[0]: green_values[0], team_names[1]: green_values[0]})
+                        #teams_data.append({team_names[0]: green_values[0], team_names[1]: green_values[0]})
+                        teams_data.append({"team_name_1": team_names[0], "team_name_2": team_names[1], "green_value": green_values[0]})
                                 
         else:
             print("Parent div with ID 'scroll-completed' not found.")
@@ -60,7 +61,7 @@ if __name__ == "__main__":
     sport_url = "https://www.dratings.com/predictor/mlb-baseball-predictions/"
     # Define the URL for the first page
     page_number = 1
-    max_pages = 3  # Maximum number of pages to fetch predictions from
+    max_pages = 5  # Maximum number of pages to fetch predictions from
     
     while page_number <= max_pages:
         url = "{}completed/{}#scroll-completed".format(sport_url, page_number)
@@ -68,7 +69,8 @@ if __name__ == "__main__":
         if predictions:
             print("\n Predictions with confidence score > 70% for page {}:".format(page_number))
             for prediction in predictions:
-                print("- {} vs {}: {}%".format(team_names, team_names, green_values))
+                
+                print("- {} vs {}: {}%".format(prediction['team_name_1'], prediction['team_name_2'], prediction['green_value']))
             page_number += 1
 
         else:
