@@ -4,10 +4,6 @@ import requests
 from bs4 import BeautifulSoup
 import statistics
 
-import requests
-from bs4 import BeautifulSoup
-import statistics
-
 def american_to_decimal(american_odds):
     if american_odds > 0:
         return round((american_odds / 100) + 1, 2)
