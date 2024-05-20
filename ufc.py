@@ -1,4 +1,7 @@
 # UFC version
+# 30, 40, 50, 100 pages -> 80%
+# 10, 20 pages -> 76%
+
 
 import requests
 from bs4 import BeautifulSoup
