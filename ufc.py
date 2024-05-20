@@ -32,10 +32,58 @@ def get_predictions(url):
                     team_names = []  # List to store team names in a match
                     green_values = []  # List to store values associated with the teams
                     decimal_odds = []
-
+                    fighter_win = []
+                    fighter_position = -1
+                    win_or_lose = ""
+                    
+                    
 
                     for cell in cells:
-                        if cell.get("class") == ["table-division"]:
+                        if cell.get("class") == ["table-division"]:  # Filter for confidence
+                            # Within each of these td elements, find the span elements
+                            span_elements = cell.find_all("span", class_=True)
+                            
+                            # Find if green confidence is first or second
+                            if span_elements:
+                                first_class = span_elements[0]['class'][0]
+                                if first_class == 'tc--red':
+                                    fighter_position = 1
+                                    
+                                elif first_class == 'tc--green':
+                                    fighter_position = 0
+                                    
+                                # Find the green value
+                                green_value = cell.find("span", class_="tc--green")
+                                if green_value:
+                                    green_value = green_value.text.strip().replace('%', '')  # Remove percentage sign
+                                    green_value = float(green_value)  # Convert to float
+                                    if green_value >= 70:  # Only find team names and odds if dratings confidence >= 70
+
+                                      # Once green value found, print out fighters name
+                                      for cell in cells:
+                                        if cell.get("class") == ["ta--left", "tf--body"]:
+                                          # Once fighters name found, print their name
+                                          spany_elements = cell.find_all("span", class_="table-cell--mw d--ib lh--12")
+                                          
+                                      # Determines if the fighter won or lost
+                                      for cell in cells:
+                                        if cell.text == "WinLoss" and fighter_position == 0:
+                                          win_or_lose = cell.text.strip("Loss")
+                                        elif cell.text == "WinLoss" and fighter_position == 1:
+                                          win_or_lose = cell.text.strip("Win")
+                                        elif cell.text == "LossWin" and fighter_position == 0:
+                                          win_or_lose = cell.text.strip("Win")
+                                        elif cell.text == "LossWin" and fighter_position == 1:
+                                          win_or_lose = cell.text.strip("Loss")
+                                          
+                                      #team_names.append(spany_elements[fighter_position].text)
+                                      print(spany_elements[fighter_position].text, "@", green_value, ":", win_or_lose)
+                                        
+                                
+                    
+
+                    for cell in cells:
+                        if cell.get("class") == ["table-division"]: # Filter for confidence
                             # Within each of these td elements, find the span elements
                             green_value = cell.find("span", class_="tc--green")
                             if green_value:
@@ -45,11 +93,19 @@ def get_predictions(url):
                                     
                                     # Runs through the row to find the 2 team names
                                     for cell in cells:
+                                        fighter_position = 1
                                         if cell.get("class") == ["ta--left", "tf--body"]:
                                             # Within each of these td elements, find the span elements
                                             span_elements = cell.find_all("span", class_="table-cell--mw d--ib lh--12")
                                             for span in span_elements:
+                                                if fighter_position == 1:
+                                                  #print(span.text.strip())
+                                                  fighter_position = 2
+                                                else:
+                                                  #print(span.text.strip())
+                                                  fighter_position = 1
                                                 team_names.append(span.text.strip())  # Add team name to the list
+                                                
                 
                                     # Find the odds within the current row
                                     if not green_values:
@@ -73,6 +129,8 @@ def get_predictions(url):
                                             odd = int(odd)
                                             decimal_odd = american_to_decimal(odd)
                                             decimal_odds.append(decimal_odd)
+                                            
+      
                                 
                     # Find the td elements with class "table-division"
                     for cell in cells:
@@ -100,7 +158,7 @@ if __name__ == "__main__":
     sport_url = "https://www.dratings.com/predictor/ufc-mma-predictions/"
     # Define the URL for the first page
     page_number = 1
-    max_pages = 11  # Maximum number of pages to fetch predictions from
+    max_pages = 1  # Maximum number of pages to fetch predictions from
     total_odds = []
     
     while page_number <= max_pages:
