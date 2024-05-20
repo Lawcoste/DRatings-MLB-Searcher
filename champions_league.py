@@ -1,4 +1,10 @@
 # Champions League version
+# 27 pages -> 81%
+# 20 pages -> 79%
+# 15 pages -> 83%
+# 10 pages -> 86%
+# 5 pages -> 80%
+
 
 import requests
 from bs4 import BeautifulSoup
