@@ -29,11 +29,7 @@ def get_predictions(url):
                 # Now loop through rows of the table
                 for row in table.find_all("tr"):
                     cells = row.find_all("td")
-                    team_names = []  # List to store team names in a match
-                    green_values = []  # List to store values associated with the teams
-                    decimal_odds = []
                     fighter_win = []
-                    win_list = []
                     fighter_position = -1
                     win_or_lose = ""
                     
@@ -97,8 +93,7 @@ def get_predictions(url):
                                               
                                           odd = int(odd)
                                           decimal_odd = american_to_decimal(odd)
-                                          decimal_odds.append(decimal_odd)
-                                      
+
                                       teams_data.append({"fighter_name": spany_elements[fighter_position].text, "green_value": green_value, "odds": decimal_odd, "win_or_lose": win_or_lose})
                                         
                                 
