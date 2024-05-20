@@ -98,12 +98,6 @@ def get_predictions(url):
                                           odd = int(odd)
                                           decimal_odd = american_to_decimal(odd)
                                           decimal_odds.append(decimal_odd)
-                                          
-                                          
-                                      # Append to all the arrays
-                                      team_names.append(spany_elements[fighter_position].text)
-                                      green_values.append(green_value)
-                                      win_list.append(win_or_lose)
                                       
                                       teams_data.append({"fighter_name": spany_elements[fighter_position].text, "green_value": green_value, "odds": decimal_odd, "win_or_lose": win_or_lose})
                                         
