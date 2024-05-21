@@ -1,8 +1,5 @@
 # Premier League version
-# 24 pages -> 76%
-# 20 pages -> 75%
-# 15 pages -> 76%
-# 10 pages -> 77%
+# 10, 15, 20, 30, 50, 78 pages -> 76%
 # 5 pages -> 89%
 
 
@@ -96,10 +93,17 @@ def get_predictions(url):
                                               odd = 0
                                           elif odd[0] == '-':
                                               odd = odd.split('+')[0]
+                                          elif odd[0] == '+' and odd[4] == '+': #If both are underdogs 
+                                              first_odd = odd.strip()[:4]
+                                              second_odd = odd.strip()[4:]
+                                              if first_odd >= second_odd:
+                                                odd = second_odd
+                                              else:
+                                                odd = first_odd
                                           else:
                                               odd = odd.split('-')[1]
                                               odd = "-" + odd
-                                              
+
                                           odd = int(odd)
                                           decimal_odd = american_to_decimal(odd)
                                       
@@ -114,16 +118,13 @@ def get_predictions(url):
         print("Failed to fetch predictions")
 
 
-# 24 pages -> 76%
-# 20 pages -> 75%
-# 15 pages -> 76%
-# 10 pages -> 77%
+# 10, 15, 20, 30, 50, 78 pages -> 76%
 # 5 pages -> 89%
 if __name__ == "__main__":
     sport_url = "https://www.dratings.com/predictor/english-premier-league-predictions/"
     # Define the URL for the first page
     page_number = 1
-    max_pages = 24  # Maximum number of pages to fetch predictions from
+    max_pages = 3  # Maximum number of pages to fetch predictions from
     total_odds = []
     total_wins_counter = 0
     total_bets_counter = 0
