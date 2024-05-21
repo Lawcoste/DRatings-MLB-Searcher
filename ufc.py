@@ -90,6 +90,13 @@ def get_predictions(url):
                                               odd = 0
                                           elif odd[0] == '-':
                                               odd = odd.split('+')[0]
+                                          elif odd[0] == '+' and odd[4] == '+': #If both are underdogs 
+                                              first_odd = odd.strip()[:4]
+                                              second_odd = odd.strip()[4:]
+                                              if first_odd >= second_odd:
+                                                odd = second_odd
+                                              else:
+                                                odd = first_odd
                                           else:
                                               odd = odd.split('-')[1]
                                               odd = "-" + odd
