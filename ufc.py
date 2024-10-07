@@ -6,6 +6,7 @@
 import requests
 from bs4 import BeautifulSoup
 import statistics
+import math
 
 def american_to_decimal(american_odds):
     if american_odds > 0:
@@ -28,6 +29,7 @@ def get_predictions(url):
         if parent_div:
             # Find the table within the parent div
             table = parent_div.find("table")
+            betting_count = 0
             if table:
                 # Now loop through rows of the table
                 for row in table.find_all("tr"):
@@ -67,14 +69,13 @@ def get_predictions(url):
                                       # Determines if the fighter won or lost
                                       for cell in cells:
                                         if cell.text == "WinLoss" and fighter_position == 0:
-                                          win_or_lose = cell.text.strip("Loss")
+                                            win_or_lose = cell.text.strip("Loss")
                                         elif cell.text == "WinLoss" and fighter_position == 1:
-                                          win_or_lose = cell.text.strip("Win")
+                                            win_or_lose = cell.text.strip("Win")
                                         elif cell.text == "LossWin" and fighter_position == 0:
-                                          win_or_lose = cell.text.strip("Win")
+                                            win_or_lose = cell.text.strip("Win")
                                         elif cell.text == "LossWin" and fighter_position == 1:
-                                          win_or_lose = cell.text.strip("Loss")
-                                          
+                                            win_or_lose = cell.text.strip("Loss")                                          
                                           
                                       
                                       vegas_sportsbook_div = row.find('div', class_='vegas-sportsbook')
@@ -104,7 +105,10 @@ def get_predictions(url):
                                           odd = int(odd)
                                           decimal_odd = american_to_decimal(odd)
 
-                                      teams_data.append({"fighter_name": spany_elements[fighter_position].text, "green_value": green_value, "odds": decimal_odd, "win_or_lose": win_or_lose})
+                                      teams_data.append({"fighter_name": spany_elements[fighter_position].text, 
+                                                         "green_value": green_value, 
+                                                         "odds": decimal_odd, 
+                                                         "win_or_lose": win_or_lose})
                                         
                                 
         else:
@@ -121,10 +125,11 @@ if __name__ == "__main__":
     sport_url = "https://www.dratings.com/predictor/ufc-mma-predictions/"
     # Define the URL for the first page
     page_number = 1
-    max_pages = 13  # Maximum number of pages to fetch predictions from
+    max_pages = 10  # Maximum number of pages to fetch predictions from
     total_odds = []
     total_wins_counter = 0
     total_bets_counter = 0
+    betting_count = 0
     
     while page_number <= max_pages:
         url = "{}completed/{}#scroll-completed".format(sport_url, page_number)
@@ -135,8 +140,10 @@ if __name__ == "__main__":
                 if prediction['win_or_lose'] == "Win":
                   total_wins_counter+=1
                   total_bets_counter+=1
+                  betting_count+=(prediction['odds']-1)
                 else:
                   total_bets_counter+=1
+                  betting_count-=1
                   
                 print("{}, {}%, {}, {}".format(prediction['fighter_name'], prediction['green_value'], prediction['win_or_lose'], prediction["odds"]))
                 total_odds.append(prediction['odds'])
@@ -148,4 +155,5 @@ if __name__ == "__main__":
     mean_odds = statistics.mean(total_odds)
     win_rate = total_wins_counter/total_bets_counter
     print("\nWin rate", total_wins_counter, "/", total_bets_counter, "=", win_rate)
-    print("Average Odds: ", mean_odds)
+    print("Average Odds: ", math.floor(mean_odds * 100) / 100)
+    print("Total profit", math.floor(betting_count * 100) / 100, "/", total_bets_counter, "=", math.floor(betting_count / total_bets_counter * 100) / 100, "%")
